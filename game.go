@@ -49,13 +49,13 @@ func (game *Game) String() (ret string) {
 		for j := 0; j < boardSize; j++ {
 			ret += "| "
 			if game.board[i][j] == OpenPosition {
-				ret += string(colorYellow) + " " + game.board[i][j] + string(colorReset)
+				ret += colorYellow + " " + game.board[i][j] + colorReset
 			}
 			if game.board[i][j] == X {
-				ret += string(colorBlue) + " " + game.board[i][j] + string(colorReset)
+				ret += colorBlue + " " + game.board[i][j] + colorReset
 			}
 			if game.board[i][j] == O {
-				ret += string(colorRed) + " " + game.board[i][j] + string(colorReset)
+				ret += colorRed + " " + game.board[i][j] + colorReset
 			}
 			ret += "  "
 		}
