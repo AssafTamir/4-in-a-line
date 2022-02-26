@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Game struct {
 	board     [boardSize][boardSize]*Token
@@ -30,7 +33,7 @@ func (game *Game) applyMove(move int) *Game {
 	if !game.isPossibleMove(move) {
 		return nil
 	}
-	for i := 7; i >= 0; i-- {
+	for i := boardSize - 1; i >= 0; i-- {
 		if game.board[i][move] == OpenPosition {
 			game.board[i][move] = game.players[game.turnIndex].getToken()
 			return game
@@ -44,8 +47,15 @@ func (game *Game) isPossibleMove(pos int) bool {
 }
 
 func (game *Game) String() (ret string) {
-
-	ret += string(colorPurple) + "\n|  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |" + string(colorReset) + "\n"
+	header := "\n\n"
+	for i := 1; i < boardSize+1; i++ {
+		header += "|  " + strconv.Itoa(i) + " "
+		if len(strconv.Itoa(i)) == 1 {
+			header += " "
+		}
+	}
+	header += "|"
+	ret += string(colorPurple) + header + string(colorReset) + "\n"
 	for i := 0; i < boardSize; i++ {
 		for j := 0; j < boardSize; j++ {
 			ret += "|  "
