@@ -3,8 +3,10 @@ package main
 import "fmt"
 
 type Game struct {
-	board [boardSize][boardSize]string
-	turn  string
+	board   [boardSize][boardSize]*Token
+	player1 Player
+	player2 Player
+	turn    Player
 }
 
 func (game *Game) newGame() *Game {
@@ -13,7 +15,7 @@ func (game *Game) newGame() *Game {
 			game.board[i][j] = OpenPosition
 		}
 	}
-	game.turn = X
+	game.turn = game.player1
 	return game
 }
 
@@ -31,7 +33,7 @@ func (game *Game) applyMove(move int) *Game {
 	}
 	for i := 7; i >= 0; i-- {
 		if game.board[i][move] == OpenPosition {
-			game.board[i][move] = game.turn
+			game.board[i][move] = game.turn.getToken()
 			return game
 		}
 
@@ -47,16 +49,8 @@ func (game *Game) String() (ret string) {
 	ret += string(colorPurple) + "\n|  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |" + string(colorReset) + "\n"
 	for i := 0; i < boardSize; i++ {
 		for j := 0; j < boardSize; j++ {
-			ret += "| "
-			if game.board[i][j] == OpenPosition {
-				ret += colorYellow + " " + game.board[i][j] + colorReset
-			}
-			if game.board[i][j] == X {
-				ret += colorBlue + " " + game.board[i][j] + colorReset
-			}
-			if game.board[i][j] == O {
-				ret += colorRed + " " + game.board[i][j] + colorReset
-			}
+			ret += "|  "
+			ret += game.board[i][j].string()
 			ret += "  "
 		}
 		ret += "|\n"
@@ -100,7 +94,7 @@ func (game *Game) isWinnerOnPosition(x int, y int) bool {
 
 	return false
 }
-func (game *Game) isGameOver() (bool, string) {
+func (game *Game) isGameOver() (bool, *Token) {
 	for i := 0; i < boardSize; i++ {
 		for j := 0; j < boardSize; j++ {
 			if game.board[i][j] == OpenPosition {
@@ -112,37 +106,32 @@ func (game *Game) isGameOver() (bool, string) {
 			}
 		}
 	}
-	return false, ""
+	return false, nil
 }
-func (game *Game) game(player1 Player, player2 Player, isPrintBoard bool) (bool, string) {
+func (game *Game) game(isPrintBoard bool) (bool, *Token) {
 
 	for {
 		if isPrintBoard {
 			fmt.Println(game)
 		}
 
-		isWinner, player := game.isGameOver()
+		isWinner, token := game.isGameOver()
 		if isWinner {
-			return true, player
+			return true, token
 		}
 		if game.isBoardFull() {
-			return false, gameOver
+			return false, nil
 		}
-		if game.turn == X {
-			player1.move(game)
-		} else {
-			player2.move(game)
-		}
-
+		game.turn.move(game)
 		game.switchTurn()
 	}
 }
 
 func (game *Game) switchTurn() *Game {
-	if game.turn == X {
-		game.turn = O
+	if game.turn.getToken() == X {
+		game.turn = game.player2
 	} else {
-		game.turn = X
+		game.turn = game.player1
 	}
 	return game
 }

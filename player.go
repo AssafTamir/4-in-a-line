@@ -16,18 +16,31 @@ type simulationResult struct {
 }
 type Player interface {
 	move(game *Game)
+	getToken() *Token
 }
 
 type ComputerPlayer struct {
 	numOfGames int
+	token      *Token
 }
 
 type RandomPlayer struct {
 	random *rand.Rand
+	token  *Token
+}
+type HumanPlayer struct {
+	token *Token
 }
 
-type HumanPlayer struct{}
-
+func (player *ComputerPlayer) getToken() *Token {
+	return player.token
+}
+func (player *RandomPlayer) getToken() *Token {
+	return player.token
+}
+func (player *HumanPlayer) getToken() *Token {
+	return player.token
+}
 func (player *ComputerPlayer) move(game *Game) {
 	start := time.Now()
 	ch := make(chan simulationResult, boardSize)
@@ -45,8 +58,10 @@ func (player *ComputerPlayer) move(game *Game) {
 				var random = rand.New(s)
 				for games := 0; games < player.numOfGames; games++ {
 					newGame := *game
+					newGame.player1 = &RandomPlayer{random, game.player1.getToken()}
+					newGame.player2 = &RandomPlayer{random, game.player2.getToken()}
 					newGame.applyMove(i).switchTurn()
-					isWinner, winner := newGame.game(&RandomPlayer{random}, &RandomPlayer{random}, false)
+					isWinner, winner := newGame.game(false)
 					if isWinner && winner == O {
 						countWins++
 					}
@@ -72,7 +87,7 @@ func (player *ComputerPlayer) move(game *Game) {
 func (player *HumanPlayer) move(game *Game) {
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Print(game.turn + " Enter move: ")
+		fmt.Print(game.turn.getToken().string() + " Enter move: ")
 		text, _ := reader.ReadString('\n')
 		move, _ := strconv.Atoi(text[0:1])
 		if game.applyMove(move-1) != nil {
