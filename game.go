@@ -3,10 +3,9 @@ package main
 import "fmt"
 
 type Game struct {
-	board   [boardSize][boardSize]*Token
-	player1 Player
-	player2 Player
-	turn    Player
+	board     [boardSize][boardSize]*Token
+	players   []Player
+	turnIndex int
 }
 
 func (game *Game) newGame() *Game {
@@ -15,7 +14,7 @@ func (game *Game) newGame() *Game {
 			game.board[i][j] = OpenPosition
 		}
 	}
-	game.turn = game.player1
+	game.turnIndex = 0
 	return game
 }
 
@@ -33,7 +32,7 @@ func (game *Game) applyMove(move int) *Game {
 	}
 	for i := 7; i >= 0; i-- {
 		if game.board[i][move] == OpenPosition {
-			game.board[i][move] = game.turn.getToken()
+			game.board[i][move] = game.players[game.turnIndex].getToken()
 			return game
 		}
 
@@ -50,7 +49,7 @@ func (game *Game) String() (ret string) {
 	for i := 0; i < boardSize; i++ {
 		for j := 0; j < boardSize; j++ {
 			ret += "|  "
-			ret += game.board[i][j].string()
+			ret += game.board[i][j].String()
 			ret += "  "
 		}
 		ret += "|\n"
@@ -122,16 +121,12 @@ func (game *Game) game(isPrintBoard bool) (bool, *Token) {
 		if game.isBoardFull() {
 			return false, nil
 		}
-		game.turn.move(game)
+		game.players[game.turnIndex].move(game)
 		game.switchTurn()
 	}
 }
 
 func (game *Game) switchTurn() *Game {
-	if game.turn.getToken() == X {
-		game.turn = game.player2
-	} else {
-		game.turn = game.player1
-	}
+	game.turnIndex = (game.turnIndex + 1) % len(game.players)
 	return game
 }

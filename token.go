@@ -5,6 +5,6 @@ type Token struct {
 	color string
 }
 
-func (t *Token) string() string {
+func (t Token) String() string {
 	return t.color + t.char + colorReset
 }

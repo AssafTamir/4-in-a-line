@@ -14,4 +14,6 @@ const boardSize = 8
 
 var X = &Token{"X", colorBlue}
 var O = &Token{"O", colorRed}
+var W = &Token{"W", colorGreen}
+
 var OpenPosition = &Token{" ", colorReset}

@@ -58,11 +58,13 @@ func (player *ComputerPlayer) move(game *Game) {
 				var random = rand.New(s)
 				for games := 0; games < player.numOfGames; games++ {
 					newGame := *game
-					newGame.player1 = &RandomPlayer{random, game.player1.getToken()}
-					newGame.player2 = &RandomPlayer{random, game.player2.getToken()}
+					newGame.players = []Player{}
+					for _, p := range game.players {
+						newGame.players = append(newGame.players, &RandomPlayer{random, p.getToken()})
+					}
 					newGame.applyMove(i).switchTurn()
 					isWinner, winner := newGame.game(false)
-					if isWinner && winner == O {
+					if isWinner && winner == player.getToken() {
 						countWins++
 					}
 				}
@@ -81,13 +83,13 @@ func (player *ComputerPlayer) move(game *Game) {
 	}
 	game.applyMove(maxWinsIndex)
 	elapsed := time.Since(start)
-	fmt.Printf("Turn took %s", elapsed)
+	fmt.Printf(player.getToken().String()+" Turn took %s", elapsed)
 }
 
 func (player *HumanPlayer) move(game *Game) {
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Print(game.turn.getToken().string() + " Enter move: ")
+		fmt.Print(game.players[game.turnIndex].getToken().String() + " Enter move: ")
 		text, _ := reader.ReadString('\n')
 		move, _ := strconv.Atoi(text[0:1])
 		if game.applyMove(move-1) != nil {
