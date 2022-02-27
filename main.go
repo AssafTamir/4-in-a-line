@@ -3,30 +3,26 @@ package main
 import "fmt"
 
 func main() {
-	player1 := ComputerPlayer{10, X}
-	player2 := ComputerPlayer{1000, O}
-	player3 := ComputerPlayer{10, W}
-	player4 := ComputerPlayer{1000, D}
-
-	game := Game{[boardSize][boardSize]*Token{}, []Player{&player1, &player2, &player3, &player4}, 0}
-	game.newGame()
-	isWinner, winner := game.game(true)
-	if isWinner {
-		fmt.Println(winner.char, " win!")
-	} else {
-		fmt.Println(gameOver)
+	players := []Player{
+		&ComputerPlayer{1, X},
+		&ComputerPlayer{1, O},
+		&ComputerPlayer{1, W},
+		&ComputerPlayer{10000, D},
 	}
+	counter := make(map[string]int)
+	for _, p := range players {
+		counter[p.getToken().char] = 0
+	}
+	for i := 0; i < 100; i++ {
+		game := Game{[boardSize][boardSize]*Token{}, players, 0}
+		game.newGame()
+		isWinner, winner := game.game(false)
+		if isWinner {
+			fmt.Println(winner.char, " win!")
+			counter[winner.char]++
+		} else {
+			fmt.Println(gameOver)
+		}
+	}
+	fmt.Println(counter)
 }
-
-//func main() {
-//	player1 := HumanPlayer{X}
-//	player2 := ComputerPlayer{numOfGames, O}
-//	game := Game{[boardSize][boardSize]*Token{}, []Player{&player1, &player2}, 0, nil}
-//	game.newGame()
-//	isWinner, winner := game.game(true)
-//	if isWinner {
-//		fmt.Println(winner.char, " win!")
-//	} else {
-//		fmt.Println(gameOver)
-//	}
-//}

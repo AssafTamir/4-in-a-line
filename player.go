@@ -83,7 +83,7 @@ func (player *ComputerPlayer) move(game *Game) {
 	}
 	game.applyMove(maxWinsIndex)
 	elapsed := time.Since(start)
-	fmt.Printf(player.getToken().String()+" Turn took %s", elapsed)
+	fmt.Printf(player.getToken().String()+" Turn took %s\n", elapsed)
 }
 
 func (player *HumanPlayer) move(game *Game) {
