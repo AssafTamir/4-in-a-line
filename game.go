@@ -6,9 +6,10 @@ import (
 )
 
 type Game struct {
-	board     [boardSize][boardSize]*Token
-	players   []Player
-	turnIndex int
+	board       [boardSize][boardSize]*Token
+	players     []Player
+	turnIndex   int
+	moveCounter int
 }
 
 func (game *Game) newGame() *Game {
@@ -18,6 +19,7 @@ func (game *Game) newGame() *Game {
 		}
 	}
 	game.turnIndex = 0
+	game.moveCounter = 0
 	return game
 }
 
@@ -138,5 +140,6 @@ func (game *Game) game(isPrintBoard bool) (bool, *Token) {
 
 func (game *Game) switchTurn() *Game {
 	game.turnIndex = (game.turnIndex + 1) % len(game.players)
+	game.moveCounter++
 	return game
 }
