@@ -5,7 +5,7 @@ import "fmt"
 func main() {
 	players := []Player{
 		&HumanPlayer{X},
-		&ComputerPlayer{1, O},
+		&ComputerPlayer{10000, O},
 	}
 	counter := make(map[string]int)
 	for _, p := range players {
